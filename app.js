@@ -4,7 +4,7 @@ var caHelper = require('./controleAcademicoHelper');
 var app = express();
 
 app.get('/login', function(req, res){
-    caHelper.login('115110107','', function (result) {
+    caHelper.login('','', function (result) {
         res.json(result.userInfo);
     });
 })

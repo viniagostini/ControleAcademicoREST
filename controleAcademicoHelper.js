@@ -85,15 +85,14 @@ module.exports = {
 
 
     /**
-     *  Used to log in in the Controle Academico UFCG
+     *  Used to get all the disciplines of the student.
+     *  You need to run the login route first
      *
-     * @param login {string} user's number of registration
-     * @param password {string} user's password
      * @param callbackFunc {function} A callback function that is called when the function completes. It should have the signature `function (result)`.
      */
     getDisciplinas : function(callbackFunc){
 
-        // the login URL of Controle Academico UFCG
+        // the disciplines URL of Controle Academico UFCG
         var url = 'https://pre.ufcg.edu.br:8443/ControleAcademicoOnline/Controlador?command=AlunoTurmasListar';
 
         // Params to be passed in the request
@@ -112,8 +111,45 @@ module.exports = {
             var encoding = 'iso-8859-1';
             var html = iconv.decode(html, encoding);
 
+            var arrayData = [];
+
             if(!error){
-                callbackFunc(html);
+
+                var disciplinaFactory = function(titulo, codigo, turma, horario, periodo){
+                    return {
+                        titulo: titulo,
+                        codigo: codigo,
+                        turma: turma,
+                        horario: horario,
+                        periodo: periodo
+                    }
+                }
+
+                // loading html into cheerio that give us jQuery functionality
+                var $ = cheerio.load(html);
+
+                $('.table-striped > tbody > tr').filter(function(){
+
+                    var infoArray = [];
+
+                    $(this).find('td').each (function() {
+                        infoArray.push($(this).text());
+                    });
+
+                    var periodo = infoArray[0];
+                    var codigo = infoArray[1];
+                    var titulo = infoArray[2]; //precisa formatar
+                    var turma = infoArray[3];
+                    var horario = infoArray[4]; //precisa formatar
+
+                    var disciplina = disciplinaFactory(titulo,codigo,turma,horario,periodo);
+                    // titulo, codigo, turma, horario, creditos, periodo, urlNotas
+
+                    arrayData.push(disciplina);
+
+                });
+
+                callbackFunc(arrayData);
             }else{
                 console.log(error);
             }
