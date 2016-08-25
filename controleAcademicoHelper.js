@@ -81,6 +81,43 @@ module.exports = {
             }
             callbackFunc(result);
         })
+    },
+
+
+    /**
+     *  Used to log in in the Controle Academico UFCG
+     *
+     * @param login {string} user's number of registration
+     * @param password {string} user's password
+     * @param callbackFunc {function} A callback function that is called when the function completes. It should have the signature `function (result)`.
+     */
+    getDisciplinas : function(callbackFunc){
+
+        // the login URL of Controle Academico UFCG
+        var url = 'https://pre.ufcg.edu.br:8443/ControleAcademicoOnline/Controlador?command=AlunoTurmasListar';
+
+        // Params to be passed in the request
+        var params = {
+            method: 'GET',
+            encoding: null,
+            url: url,
+            //remember cookies for future use
+            jar: true
+        };
+
+        // the request recive the params containing the info and a callback function
+        request(params, function(error, response, html){
+
+            // enconde the html that comes from the controle academico to the original format
+            var encoding = 'iso-8859-1';
+            var html = iconv.decode(html, encoding);
+
+            if(!error){
+                callbackFunc(html);
+            }else{
+                console.log(error);
+            }
+        })
     }
 
     // more functionality soon
