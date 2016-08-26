@@ -119,9 +119,9 @@ module.exports = {
 
                     var geraUrlNotas = function(codigo, turma, periodo){
 
-                        var url = 'Controlador?command=AlunoTurmaNotas&codigo='+ codigo +'&turma='+ turma +'&periodo=' + periodo;
+                        var urlNotas = 'Controlador?command=AlunoTurmaNotas&codigo='+ codigo +'&turma='+ turma +'&periodo=' + periodo;
 
-                        return url;
+                        return urlNotas;
                     }
 
                     return {
@@ -162,6 +162,34 @@ module.exports = {
                 console.log(error);
             }
         })
+    },
+
+    getInfoDisciplina : function(urlDisciplina, callbackFunc){
+
+        var urlBase = 'https://pre.ufcg.edu.br:8443/ControleAcademicoOnline/' + urlDisciplina;
+
+        // Params to be passed in the request
+        var params = {
+            method: 'GET',
+            encoding: null,
+            url: urlBase,
+            //remember cookies for future use
+            jar: true
+        };
+
+        // the request recive the params containing the info and a callback function
+        request(params, function(error, response, html) {
+
+            // enconde the html that comes from the controle academico to the original format
+            var encoding = 'iso-8859-1';
+            var html = iconv.decode(html, encoding);
+
+            if (!error) {
+                callbackFunc(html);
+            }
+
+        });
+
     }
 
     // more functionality soon
