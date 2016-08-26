@@ -5,7 +5,7 @@ var app = express();
 
 app.get('/login', function(req, res){
     caHelper.login('','', function (result) {
-        res.json(result.userInfo);
+        res.send(result.userInfo);
     });
 })
 

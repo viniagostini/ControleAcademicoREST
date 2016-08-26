@@ -66,15 +66,15 @@ module.exports = {
 
                     // after analysing the DOM, the best way to find the info we need is using this strategy
                     if( data.children().text() === 'Curso:'){
-                        result.userInfo.curso = data.next().html();
+                        result.userInfo.curso = data.next().text();
                     }
 
                     if( data.children().text() === 'Campus:'){
-                        result.userInfo.campus = data.next().html();
+                        result.userInfo.campus = data.next().text();
                     }
 
                     if( data.children().text() === 'Usuário:'){
-                        result.userInfo.usuario = data.next().html();
+                        result.userInfo.usuario = data.next().text();
                     }
 
                 });
@@ -116,12 +116,21 @@ module.exports = {
             if(!error){
 
                 var disciplinaFactory = function(titulo, codigo, turma, horario, periodo){
+
+                    var geraUrlNotas = function(codigo, turma, periodo){
+
+                        var url = 'Controlador?command=AlunoTurmaNotas&codigo='+ codigo +'&turma='+ turma +'&periodo=' + periodo;
+
+                        return url;
+                    }
+
                     return {
                         titulo: titulo,
                         codigo: codigo,
                         turma: turma,
                         horario: horario,
-                        periodo: periodo
+                        periodo: periodo,
+                        urlNotas: geraUrlNotas(codigo, turma, periodo)
                     }
                 }
 
@@ -138,12 +147,11 @@ module.exports = {
 
                     var periodo = infoArray[0];
                     var codigo = infoArray[1];
-                    var titulo = infoArray[2]; //precisa formatar
+                    var titulo = infoArray[2].replace(/(\r\n|\n|\r)/gm,"");
                     var turma = infoArray[3];
-                    var horario = infoArray[4]; //precisa formatar
+                    var horario = infoArray[4].replace(/(\r\n|\n|\r)/gm,"");
 
-                    var disciplina = disciplinaFactory(titulo,codigo,turma,horario,periodo);
-                    // titulo, codigo, turma, horario, creditos, periodo, urlNotas
+                    var disciplina = disciplinaFactory(titulo, codigo, turma, horario, periodo);
 
                     arrayData.push(disciplina);
 
