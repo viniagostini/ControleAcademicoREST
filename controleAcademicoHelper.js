@@ -114,24 +114,14 @@ module.exports = {
             var arrayData = [];
 
             if(!error){
-
-                var disciplinaFactory = function(titulo, codigo, turma, horario, periodo){
-
-                    var geraUrlNotas = function(codigo, turma, periodo){
-
-                        var urlNotas = 'Controlador?command=AlunoTurmaNotas&codigo='+ codigo +'&turma='+ turma +'&periodo=' + periodo;
-
-                        return urlNotas;
-                    }
-
-                    return {
-                        titulo: titulo,
-                        codigo: codigo,
-                        turma: turma,
-                        horario: horario,
-                        periodo: periodo,
-                        urlNotas: geraUrlNotas(codigo, turma, periodo)
-                    }
+                
+                function Disciplina(titulo, codigo, turma, horario, periodo){
+                    this.titulo = titulo;
+                    this.codigo = codigo;
+                    this.turma = turma;
+                    this.horario = horario;
+                    this.periodo = periodo;
+                    this.urlNotas = urlNotas = 'Controlador?command=AlunoTurmaNotas&codigo='+ codigo +'&turma='+ turma +'&periodo=' + periodo;
                 }
 
                 // loading html into cheerio that give us jQuery functionality
@@ -151,7 +141,8 @@ module.exports = {
                     var turma = infoArray[3];
                     var horario = infoArray[4].replace(/(\r\n|\n|\r)/gm,"");
 
-                    var disciplina = disciplinaFactory(titulo, codigo, turma, horario, periodo);
+                    //var disciplina = disciplinaFactory(titulo, codigo, turma, horario, periodo);
+                    var disciplina = new Disciplina(titulo, codigo, turma, horario, periodo);
 
                     arrayData.push(disciplina);
 
