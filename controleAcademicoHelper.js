@@ -114,8 +114,8 @@ module.exports = {
             var arrayData = [];
 
             if(!error){
-                
-                function Disciplina(titulo, codigo, turma, horario, periodo){
+
+                function Disciplina( titulo, codigo, turma, horario, periodo ){
                     this.titulo = titulo;
                     this.codigo = codigo;
                     this.turma = turma;
@@ -176,7 +176,43 @@ module.exports = {
             var html = iconv.decode(html, encoding);
 
             if (!error) {
-                callbackFunc(html);
+
+                results = [];
+
+                // loading html into cheerio that give us jQuery functionality
+                var $ = cheerio.load(html);
+
+                var info = {};
+
+                var notas = [];
+                $('.table-striped > tbody > tr').filter(function(){
+
+                    $(this).find('.text-right').each (function() {
+                        notas.push($(this).text());
+                    });
+                });
+
+                var pesos = [];
+                $('.table-striped > thead > tr').filter(function(){
+                    $(this).find('.text-muted').each (function() {
+                        pesos.push($(this).text());
+                    });
+                });
+
+                info.notas = [];
+
+                pesos.forEach(function (peso){
+                    var nota = {
+                        nota: notas.shift(),
+                        peso: peso
+                    };
+                    info.notas.push(nota);
+                });
+
+                info.mediaParcial = notas.shift();
+                info.exameFinal = notas.shift();
+                info.mediaFinal = notas.shift();
+                callbackFunc(info);
             }
 
         });
