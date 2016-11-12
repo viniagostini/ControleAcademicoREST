@@ -1,12 +1,23 @@
 var express = require('express');
+var bodyParser= require('body-parser')
 var caHelper = require('./controleAcademicoHelper');
-
 var app = express();
+app.use(bodyParser.urlencoded({extended: true}))
 
-app.get('/login', function(req, res){
-    caHelper.login('','', function (result) {
-        res.send(result.userInfo);
-    });
+
+app.post('/login', function(req, res){
+    if(req.body && req.body.login && req.body.password){
+        caHelper.login(req.body.login, req.body.password, function (result) {
+            res.json(result.userInfo);
+        });
+    }else{
+        var response = {
+            statusCode: 401,
+            error: "login or password missing."
+        }
+        res.json(response);
+    }
+
 });
 
 app.get('/disciplinas', function(req, res){
@@ -15,9 +26,9 @@ app.get('/disciplinas', function(req, res){
     });
 });
 
-
 app.get('/disciplina', function(req, res){
-    caHelper.getInfoDisciplina('Controlador?command=AlunoTurmaNotas&codigo=1411171&turma=02&periodo=2016.1', function (responseHtml) {
+    console.log(req.params);
+    caHelper.getInfoDisciplina('Controlador?command=AlunoTurmaNotas&codigo=1304013&turma=01&periodo=2016.2', function (responseHtml) {
         res.send(responseHtml);
     });
 });
